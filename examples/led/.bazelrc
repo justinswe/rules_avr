@@ -1,0 +1,3 @@
+build:avr --platforms=//:curiosity_board
+build --host_cxxopt=-mmacosx-version-min=10.15
+build --cxxopt=-mmacosx-version-min=10.15

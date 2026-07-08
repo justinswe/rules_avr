@@ -1,0 +1,41 @@
+# Copyright 2026 The rules_avr authors
+#
+
+# The build file template for the Rust source code.
+
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+package(default_visibility = ["//visibility:public"])
+
+rust_library(
+    name = "core",
+    srcs = glob([
+        "rust-src/lib/rustlib/src/rust/library/core/src/**/*.rs",
+        "rust-src/lib/rustlib/src/rust/library/stdarch/crates/core_arch/src/**/*.rs",
+        "rust-src/lib/rustlib/src/rust/library/portable-simd/crates/core_simd/src/**/*.rs",
+    ]),
+    compile_data = glob([
+        "rust-src/lib/rustlib/src/rust/library/core/src/**/*.md",
+        "rust-src/lib/rustlib/src/rust/library/stdarch/crates/core_arch/src/**/*.md",
+        "rust-src/lib/rustlib/src/rust/library/portable-simd/crates/core_simd/src/**/*.md",
+    ]),
+    crate_name = "core",
+    edition = "2024",
+)
+
+rust_library(
+    name = "compiler_builtins",
+    srcs = glob([
+        "rust-src/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins/src/**/*.rs",
+        "rust-src/lib/rustlib/src/rust/library/compiler-builtins/libm/src/**/*.rs",
+    ]),
+    crate_features = [
+        "compiler-builtins",
+        "mem",
+    ],
+    crate_name = "compiler_builtins",
+    crate_root = "rust-src/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins/src/lib.rs",
+    edition = "2024",
+    rustc_env = {"RUSTC_BOOTSTRAP": "1"},
+    deps = [":core"],
+)

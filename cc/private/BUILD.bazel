@@ -1,0 +1,4 @@
+# Copyright 2026 The rules_avr authors
+#
+
+exports_files(["BUILD.toolchains"])

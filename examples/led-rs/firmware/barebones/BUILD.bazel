@@ -1,0 +1,17 @@
+# Copyright 2026 The rules_avr authors
+#
+
+load("@rules_avr//:defs.bzl", "avr_rust_binary", "avrdude_flash")
+
+avr_rust_binary(
+    name = "barebones",
+    srcs = ["src/main.rs"],
+    compatible_mcus = ["avr128db48"],
+    mcu = "avr128db48",
+)
+
+avrdude_flash(
+    name = "flash",
+    src = ":barebones",
+    programmer = "pkobn_updi",
+)

@@ -1,0 +1,17 @@
+# Copyright 2026 The rules_avr authors
+#
+
+load("@rules_avr//:defs.bzl", "avr_cc_binary", "avrdude_flash")
+
+avr_cc_binary(
+    name = "hello",
+    srcs = ["hello_main.c"],
+    compatible_mcus = ["avr128db48"],
+    mcu = "avr128db48",
+)
+
+avrdude_flash(
+    name = "flash",
+    src = ":hello",
+    programmer = "pkobn_updi",
+)

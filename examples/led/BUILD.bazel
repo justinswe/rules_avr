@@ -1,0 +1,21 @@
+# Copyright 2026 The rules_avr authors
+#
+
+load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
+
+platform(
+    name = "curiosity_board",
+    constraint_values = [
+        "@rules_avr//avr/platform:cpu_avr",
+        "@rules_avr//avr/platform:os_none",
+        "@rules_avr//avr/platform:avr128db48",
+    ],
+)
+
+refresh_compile_commands(
+    name = "refresh_compile_commands",
+    targets = {
+        "//src/hello:hello": "--config=avr",
+        "//src/pulse:pulse_led": "--config=avr",
+    },
+)

@@ -1,0 +1,16 @@
+load("@rules_avr//avr:hosts.bzl", "SUPPORTED_HOSTS")
+
+package(default_visibility = ["//visibility:public"])
+
+[
+    toolchain(
+        name = "avr_%s" % host,
+        exec_compatible_with = SUPPORTED_HOSTS[host].constraint_values,
+        target_compatible_with = [
+            "@rules_avr//avr/platform:cpu_avr",
+        ],
+        toolchain = "%s//:avr_impl" % SUPPORTED_HOSTS[host].cc_repo,
+        toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+    )
+    for host in SUPPORTED_HOSTS
+]

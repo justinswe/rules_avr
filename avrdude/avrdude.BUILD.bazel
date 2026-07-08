@@ -1,0 +1,63 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "srcs",
+    srcs = glob(["**"]),
+)
+
+_COMMON_CACHE = {
+    "BISON_EXECUTABLE": "$$EXT_BUILD_ROOT$$/$(location @bison//:bison)",
+    "BUILD_DOC": "OFF",
+    "BUILD_SHARED_LIBS": "OFF",
+    "CMAKE_DISABLE_FIND_PACKAGE_Git": "TRUE",
+    "CMAKE_INSTALL_SYSCONFDIR": "etc",
+    "FLEX_EXECUTABLE": "$$EXT_BUILD_ROOT$$/$(location @flex//:flex)",
+    "HAVE_LIBELF": "HAVE_LIBELF-NOTFOUND",
+    "HAVE_LIBFTDI": "HAVE_LIBFTDI-NOTFOUND",
+    "HAVE_LIBFTDI1": "HAVE_LIBFTDI1-NOTFOUND",
+    "HAVE_LIBHIDAPI": "HAVE_LIBHIDAPI-NOTFOUND",
+    "HAVE_LIBREADLINE": "HAVE_LIBREADLINE-NOTFOUND",
+    "HAVE_LIBSERIALPORT": "HAVE_LIBSERIALPORT-NOTFOUND",
+    "HAVE_LIBUSB": "HAVE_LIBUSB-NOTFOUND",
+    "HAVE_LIBUSB_1_0": "HAVE_LIBUSB_1_0-NOTFOUND",
+    "HAVE_LIBUSB_WIN32": "HAVE_LIBUSB_WIN32-NOTFOUND",
+    "HAVE_LINUXGPIO": "OFF",
+    "HAVE_LINUXSPI": "OFF",
+    "HAVE_PARPORT": "OFF",
+    "USE_EXTERNAL_LIBS": "OFF",
+}
+
+cmake(
+    name = "avrdude",
+    build_data = [
+        "@bison//:bison",
+        "@bison//:bison_pkgdata",
+        "@flex//:flex",
+        "@m4//:m4",
+    ],
+    cache_entries = _COMMON_CACHE,
+    env = {
+        "BISON_PKGDATADIR": "$$EXT_BUILD_ROOT$$/external/bison+/data",
+        "M4": "$$EXT_BUILD_ROOT$$/$(location @m4//:m4)",
+    },
+    generate_args = ["-GNinja"],
+    lib_source = ":srcs",
+    out_binaries = ["avrdude"],
+    out_data_files = ["etc/avrdude.conf"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "avrdude_bin",
+    srcs = [":avrdude"],
+    output_group = "avrdude",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "avrdude_conf",
+    srcs = [":avrdude"],
+    output_group = "avrdude.conf",
+    visibility = ["//visibility:public"],
+)

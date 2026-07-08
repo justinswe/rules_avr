@@ -1,0 +1,22 @@
+load("@rules_avr//:defs.bzl", "avr_rust_project")
+
+platform(
+    name = "curiosity_board",
+    constraint_values = [
+        "@rules_avr//avr/platform:cpu_avr",
+        "@rules_avr//avr/platform:os_none",
+        "@rules_avr//avr/platform:avr128db48",
+    ],
+)
+
+# IDE support: `bazel run //:rust_project` regenerates rust-project.json so
+# rust-analyzer (Zed, VS Code, ...) sees the AVR sysroot, crate graph, and
+# proc-macros. Rerun after changing targets or dependencies.
+avr_rust_project(
+    name = "rust_project",
+    targets = [
+        "//firmware/barebones:barebones",
+        "//firmware/basic-pac:basic-pac",
+        "//firmware/interrupts:interrupts",
+    ],
+)

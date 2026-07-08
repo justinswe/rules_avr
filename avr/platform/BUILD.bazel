@@ -1,0 +1,38 @@
+# Copyright 2026 The rules_avr authors
+#
+
+load("//avr/private:mcus.bzl", "AVR_MCUS")  # buildifier: disable=bzl-visibility
+
+package(default_visibility = ["//visibility:public"])
+
+constraint_value(
+    name = "cpu_avr",
+    constraint_setting = "@platforms//cpu:cpu",
+)
+
+alias(
+    name = "os_none",
+    actual = "@platforms//os:none",
+)
+
+constraint_setting(name = "mcu")
+
+[
+    constraint_value(
+        name = mcu,
+        constraint_setting = ":mcu",
+    )
+    for mcu in AVR_MCUS
+]
+
+[
+    platform(
+        name = mcu + "_platform",
+        constraint_values = [
+            ":cpu_avr",
+            ":os_none",
+            ":" + mcu,
+        ],
+    )
+    for mcu in AVR_MCUS
+]

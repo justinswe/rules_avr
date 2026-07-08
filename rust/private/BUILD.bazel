@@ -1,0 +1,9 @@
+# Copyright 2026 The rules_avr authors
+#
+
+exports_files([
+    "BUILD.rust_src",
+    "BUILD.toolchains",
+    "gen_rust_project.sh",
+    "sysroot.bzl",
+])

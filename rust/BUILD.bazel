@@ -1,0 +1,5 @@
+# Copyright 2026 The rules_avr authors
+#
+
+# Public-facing Rust rules for AVR firmware builds.
+# Config flags live in //rust/config.

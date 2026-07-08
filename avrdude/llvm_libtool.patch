@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,5 +26,11 @@ set(CMAKE_C_STANDARD 11)
+ set(CMAKE_C_STANDARD_REQUIRED True)
+ 
++# Hermetic LLVM toolchains use llvm-libtool-darwin as the macOS archiver.
++if(APPLE AND CMAKE_AR MATCHES "llvm-libtool-darwin")
++    set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> -static -o <TARGET> <OBJECTS>")
++    set(CMAKE_C_ARCHIVE_FINISH "")
++endif()
++
+ option(BUILD_DOC "Enable building documents" OFF)
+ option(HAVE_LINUXGPIO "Enable Linux sysfs and libgpiod GPIO support" OFF)
+ option(HAVE_LINUXSPI "Enable Linux SPI support" OFF)

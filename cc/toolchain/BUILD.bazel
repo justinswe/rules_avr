@@ -1,0 +1,79 @@
+load("@rules_avr//avr/private:mcus.bzl", "AVR_MCUS")
+load("@rules_avr//cc/private:cc_toolchain_config.bzl", "avr_cc_toolchain_config")
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("//third_party/avr_toolchain:exec_filegroup.bzl", "exec_filegroup")
+
+package(default_visibility = ["//visibility:public"])
+
+exec_filegroup(
+    name = "exec_all_tools",
+    srcs = ["//third_party/avr_toolchain:all_tools"],
+    tags = ["manual"],
+)
+
+exec_filegroup(
+    name = "exec_gcc",
+    srcs = ["//third_party/avr_toolchain:gcc"],
+    tags = ["manual"],
+)
+
+exec_filegroup(
+    name = "exec_binutils",
+    srcs = ["//third_party/avr_toolchain:binutils"],
+    tags = ["manual"],
+)
+
+[
+    avr_cc_toolchain_config(
+        name = "avr_cc_toolchain_config_%s" % mcu,
+        binutils_dir = ":exec_binutils",
+        gcc_dir = ":exec_gcc",
+        mcu_flags = ["-mmcu=%s" % mcu],
+        tags = ["manual"],
+    )
+    for mcu in AVR_MCUS
+]
+
+avr_cc_toolchain_config(
+    name = "avr_cc_toolchain_config_default",
+    binutils_dir = ":exec_binutils",
+    gcc_dir = ":exec_gcc",
+    mcu_flags = [],
+    tags = ["manual"],
+)
+
+alias(
+    name = "avr_active_toolchain_config",
+    actual = select({
+        "@rules_avr//avr/platform:%s" % mcu: ":avr_cc_toolchain_config_%s" % mcu
+        for mcu in AVR_MCUS
+    } | {
+        "//conditions:default": ":avr_cc_toolchain_config_default",
+    }),
+    tags = ["manual"],
+)
+
+cc_toolchain(
+    name = "avr_impl",
+    all_files = ":exec_all_tools",
+    ar_files = ":exec_all_tools",
+    compiler_files = ":exec_all_tools",
+    dwp_files = ":exec_all_tools",
+    linker_files = ":exec_all_tools",
+    objcopy_files = ":exec_all_tools",
+    strip_files = ":exec_all_tools",
+    supports_param_files = 0,
+    tags = ["manual"],
+    toolchain_config = ":avr_active_toolchain_config",
+    toolchain_identifier = "avr-toolchain",
+)
+
+toolchain(
+    name = "avr_toolchain",
+    tags = ["manual"],
+    target_compatible_with = [
+        "@rules_avr//avr/platform:cpu_avr",
+    ],
+    toolchain = ":avr_impl",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)

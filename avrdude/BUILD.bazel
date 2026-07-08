@@ -1,0 +1,21 @@
+# Copyright 2026 The rules_avr authors
+#
+
+load("//avrdude:toolchain.bzl", "avrdude_toolchain")
+
+toolchain_type(
+    name = "toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+avrdude_toolchain(
+    name = "avrdude_hermetic_impl",
+    avrdude = "@avrdude_src//:avrdude",
+    is_foreign_cc = True,
+)
+
+toolchain(
+    name = "avrdude_hermetic",
+    toolchain = ":avrdude_hermetic_impl",
+    toolchain_type = ":toolchain_type",
+)
